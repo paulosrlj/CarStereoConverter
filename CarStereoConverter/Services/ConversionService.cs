@@ -19,10 +19,11 @@ namespace CarStereoConverter.Services
         public async Task ConvertAsync(
             string inputFile,
             string outputFile,
-            IProgress<int>? progress = null)
+            IProgress<int>? progress = null,
+            CancellationToken cancellationToken = default)
         {
             double duration =
-                await GetDurationAsync(inputFile);
+                await GetDurationAsync(inputFile, cancellationToken);
 
             string arguments =
                 $"-y " +
@@ -56,51 +57,78 @@ namespace CarStereoConverter.Services
             // Consumir stderr para evitar que o buffer
             // do processo fique cheio.
             Task<string> errorTask =
-                process.StandardError.ReadToEndAsync();
+                process.StandardError.ReadToEndAsync(cancellationToken);
 
-            while (!process.StandardOutput.EndOfStream)
+            int lastReportedPercent = -1;
+
+            try
             {
-                string? line =
-                    await process.StandardOutput
-                        .ReadLineAsync();
-
-                if (line == null)
-                    continue;
-
-                if (line.StartsWith("out_time_ms="))
+                while (true)
                 {
-                    string value =
-                        line["out_time_ms=".Length..];
+                    cancellationToken.ThrowIfCancellationRequested();
 
-                    if (long.TryParse(
-                        value,
-                        out long timeMicroseconds))
+                    string? line =
+                        await process.StandardOutput
+                            .ReadLineAsync(cancellationToken);
+
+                    if (line == null)
+                        break;
+
+                    if (line.StartsWith("out_time_ms="))
                     {
-                        double currentSeconds =
-                            timeMicroseconds / 1_000_000.0;
+                        string value =
+                            line["out_time_ms=".Length..];
 
-                        if (duration > 0)
+                        if (long.TryParse(
+                            value,
+                            out long timeMicroseconds))
                         {
-                            int percent =
-                                (int)(
-                                    currentSeconds /
-                                    duration *
+                            double currentSeconds =
+                                timeMicroseconds / 1_000_000.0;
+
+                            if (duration > 0)
+                            {
+                                int percent =
+                                    (int)(
+                                        currentSeconds /
+                                        duration *
+                                        100
+                                    );
+
+                                percent = Math.Clamp(
+                                    percent,
+                                    0,
                                     100
                                 );
 
-                            percent = Math.Clamp(
-                                percent,
-                                0,
-                                100
-                            );
-
-                            progress?.Report(percent);
+                                if (percent != lastReportedPercent)
+                                {
+                                    lastReportedPercent = percent;
+                                    progress?.Report(percent);
+                                }
+                            }
                         }
                     }
                 }
-            }
 
-            await process.WaitForExitAsync();
+                await process.WaitForExitAsync(cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                // O usuário clicou em "Parar": mata o ffmpeg
+                // imediatamente em vez de deixá-lo terminar sozinho.
+                try
+                {
+                    if (!process.HasExited)
+                        process.Kill(true);
+                }
+                catch
+                {
+                    // Processo já pode ter encerrado sozinho.
+                }
+
+                throw;
+            }
 
             string error =
                 await errorTask;
@@ -116,7 +144,8 @@ namespace CarStereoConverter.Services
         }
 
         private async Task<double> GetDurationAsync(
-            string inputFile)
+            string inputFile,
+            CancellationToken cancellationToken = default)
         {
             using var process = new Process();
 
@@ -142,9 +171,9 @@ namespace CarStereoConverter.Services
 
             string output =
                 await process.StandardOutput
-                    .ReadToEndAsync();
+                    .ReadToEndAsync(cancellationToken);
 
-            await process.WaitForExitAsync();
+            await process.WaitForExitAsync(cancellationToken);
 
             if (double.TryParse(
                 output.Trim(),

@@ -46,42 +46,24 @@
             menuStrip1 = new MenuStrip();
             mnuAjuda = new ToolStripMenuItem();
             mnuSobre = new ToolStripMenuItem();
+            btnStop = new Button();
+            btnClear = new Button();
             panelDropArea.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvFiles).BeginInit();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
-            // menuStrip1
-            // 
-            menuStrip1.Items.AddRange(new ToolStripItem[] { mnuAjuda });
-            menuStrip1.Location = new Point(0, 0);
-            menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(519, 24);
-            menuStrip1.TabIndex = 7;
-            menuStrip1.Text = "menuStrip1";
-            // 
-            // mnuAjuda
-            // 
-            mnuAjuda.DropDownItems.AddRange(new ToolStripItem[] { mnuSobre });
-            mnuAjuda.Name = "mnuAjuda";
-            mnuAjuda.Size = new Size(52, 20);
-            mnuAjuda.Text = "Ajuda";
-            // 
-            // mnuSobre
-            // 
-            mnuSobre.Name = "mnuSobre";
-            mnuSobre.Size = new Size(180, 22);
-            mnuSobre.Text = "Sobre...";
-            mnuSobre.Click += mnuSobre_Click;
-            // 
             // btnConvert
             // 
-            btnConvert.Location = new Point(16, 619);
+            btnConvert.BackColor = Color.FromArgb(40, 167, 69);
+            btnConvert.FlatStyle = FlatStyle.Flat;
+            btnConvert.ForeColor = Color.White;
+            btnConvert.Location = new Point(176, 619);
             btnConvert.Name = "btnConvert";
-            btnConvert.Size = new Size(491, 85);
+            btnConvert.Size = new Size(185, 60);
             btnConvert.TabIndex = 0;
             btnConvert.Text = "Converter";
-            btnConvert.UseVisualStyleBackColor = true;
+            btnConvert.UseVisualStyleBackColor = false;
             btnConvert.Click += btnConvert_Click;
             // 
             // label1
@@ -133,6 +115,7 @@
             txtOutputFolder.Name = "txtOutputFolder";
             txtOutputFolder.Size = new Size(382, 23);
             txtOutputFolder.TabIndex = 2;
+            txtOutputFolder.TextChanged += txtOutputFolder_TextChanged;
             // 
             // label3
             // 
@@ -179,13 +162,13 @@
             // 
             status_clm.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             status_clm.HeaderText = "Status";
-            status_clm.Name = "Status";
+            status_clm.Name = "status_clm";
             // 
             // progress_clm
             // 
             progress_clm.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             progress_clm.HeaderText = "Progress";
-            progress_clm.Name = "Progresso";
+            progress_clm.Name = "progress_clm";
             // 
             // label4
             // 
@@ -201,9 +184,60 @@
             lblStatus.AutoSize = true;
             lblStatus.Location = new Point(16, 575);
             lblStatus.Name = "lblStatus";
-            lblStatus.Size = new Size(220, 15);
+            lblStatus.Size = new Size(194, 15);
             lblStatus.TabIndex = 6;
             lblStatus.Text = "Arquivos: 0 | Concluídos: 0 | Erros: 0";
+            // 
+            // menuStrip1
+            // 
+            menuStrip1.Items.AddRange(new ToolStripItem[] { mnuAjuda });
+            menuStrip1.Location = new Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Size = new Size(519, 24);
+            menuStrip1.TabIndex = 7;
+            menuStrip1.Text = "menuStrip1";
+            // 
+            // mnuAjuda
+            // 
+            mnuAjuda.DropDownItems.AddRange(new ToolStripItem[] { mnuSobre });
+            mnuAjuda.Name = "mnuAjuda";
+            mnuAjuda.Size = new Size(50, 20);
+            mnuAjuda.Text = "Ajuda";
+            // 
+            // mnuSobre
+            // 
+            mnuSobre.Name = "mnuSobre";
+            mnuSobre.Size = new Size(113, 22);
+            mnuSobre.Text = "Sobre...";
+            mnuSobre.Click += mnuSobre_Click;
+            // 
+            // btnStop
+            // 
+            btnStop.BackColor = Color.FromArgb(220, 53, 69);
+            btnStop.CausesValidation = false;
+            btnStop.Enabled = false;
+            btnStop.FlatStyle = FlatStyle.Flat;
+            btnStop.ForeColor = Color.White;
+            btnStop.Location = new Point(16, 619);
+            btnStop.Name = "btnStop";
+            btnStop.Size = new Size(150, 60);
+            btnStop.TabIndex = 6;
+            btnStop.Text = "Parar";
+            btnStop.UseVisualStyleBackColor = false;
+            btnStop.Click += btnStop_Click;
+            // 
+            // btnClear
+            // 
+            btnClear.BackColor = Color.FromArgb(108, 117, 125);
+            btnClear.FlatStyle = FlatStyle.Flat;
+            btnClear.ForeColor = Color.White;
+            btnClear.Location = new Point(371, 619);
+            btnClear.Name = "btnClear";
+            btnClear.Size = new Size(140, 60);
+            btnClear.TabIndex = 7;
+            btnClear.Text = "Limpar";
+            btnClear.UseVisualStyleBackColor = false;
+            btnClear.Click += btnClear_Click;
             // 
             // Form1
             // 
@@ -219,10 +253,12 @@
             Controls.Add(panelDropArea);
             Controls.Add(label1);
             Controls.Add(btnConvert);
+            Controls.Add(btnStop);
+            Controls.Add(btnClear);
             Controls.Add(menuStrip1);
             MainMenuStrip = menuStrip1;
             Name = "Form1";
-            Text = "Car Stereo normalizer";
+            Text = "Normalizador de música";
             Load += Form1_Load;
             panelDropArea.ResumeLayout(false);
             panelDropArea.PerformLayout();
@@ -253,5 +289,7 @@
         private MenuStrip menuStrip1;
         private ToolStripMenuItem mnuAjuda;
         private ToolStripMenuItem mnuSobre;
+        private Button btnStop;
+        private Button btnClear;
     }
 }

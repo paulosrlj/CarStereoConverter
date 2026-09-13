@@ -1,5 +1,6 @@
 using CarStereoConverter.Models;
 using CarStereoConverter.Services;
+using System.Threading;
 
 namespace CarStereoConverter
 {
@@ -9,9 +10,21 @@ namespace CarStereoConverter
 
         private string outputFolder = "";
 
+        private CancellationTokenSource? _cts;
+
         public Form1()
         {
             InitializeComponent();
+
+            typeof(DataGridView).InvokeMember(
+                "DoubleBuffered",
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.SetProperty,
+                null,
+                dgvFiles,
+                new object[] { true }
+            );
 
             SetupDragAndDrop();
         }
@@ -213,6 +226,13 @@ namespace CarStereoConverter
             }
 
             btnConvert.Enabled = false;
+            btnStop.Enabled = true;
+            btnClear.Enabled = false;
+
+            _cts = new CancellationTokenSource();
+            CancellationToken token = _cts.Token;
+
+            bool wasCancelled = false;
 
             try
             {
@@ -261,6 +281,12 @@ namespace CarStereoConverter
 
                 for (int i = 0; i < loaded_files.Count; i++)
                 {
+                    if (token.IsCancellationRequested)
+                    {
+                        wasCancelled = true;
+                        break;
+                    }
+
                     AudioFile audioFile =
                         loaded_files[i];
 
@@ -308,7 +334,8 @@ namespace CarStereoConverter
                         await converter.ConvertAsync(
                             audioFile.InputPath,
                             audioFile.OutputPath,
-                            progress
+                            progress,
+                            token
                         );
 
                         UpdateFileStatus(
@@ -316,6 +343,17 @@ namespace CarStereoConverter
                             "Concluído",
                             100
                         );
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        UpdateFileStatus(
+                            i,
+                            "Cancelado",
+                            0
+                        );
+
+                        wasCancelled = true;
+                        break;
                     }
                     catch (Exception ex)
                     {
@@ -333,17 +371,64 @@ namespace CarStereoConverter
 
                 UpdateTotalStatus();
 
-                MessageBox.Show(
-                    "Conversão concluída.",
-                    "Concluído",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information
-                );
+                if (wasCancelled)
+                {
+                    MessageBox.Show(
+                        "Conversão interrompida pelo usuário.",
+                        "Interrompido",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+                }
+                else
+                {
+                    MessageBox.Show(
+                        "Conversão concluída.",
+                        "Concluído",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+                }
             }
             finally
             {
                 btnConvert.Enabled = true;
+                btnStop.Enabled = false;
+                btnClear.Enabled = true;
+
+                _cts?.Dispose();
+                _cts = null;
             }
+        }
+
+        // =========================================================
+        // PARAR
+        // =========================================================
+
+        private void btnStop_Click(
+            object sender,
+            EventArgs e)
+        {
+            if (_cts == null || _cts.IsCancellationRequested)
+                return;
+
+            btnStop.Enabled = false;
+
+            _cts.Cancel();
+        }
+
+        // =========================================================
+        // LIMPAR LISTA
+        // =========================================================
+
+        private void btnClear_Click(
+            object sender,
+            EventArgs e)
+        {
+            loaded_files.Clear();
+            dgvFiles.Rows.Clear();
+
+            UpdateTotalStatus();
         }
 
         // =========================================================
@@ -370,11 +455,11 @@ namespace CarStereoConverter
             if (index < dgvFiles.Rows.Count)
             {
                 dgvFiles.Rows[index]
-                    .Cells["Status"]
+                    .Cells[status_clm.Index]
                     .Value = status;
 
                 dgvFiles.Rows[index]
-                    .Cells["Progresso"]
+                     .Cells[progress_clm.Index]
                     .Value = $"{progress}%";
             }
 
@@ -434,6 +519,11 @@ namespace CarStereoConverter
             object sender,
             EventArgs e)
         {
+        }
+
+        private void txtOutputFolder_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
