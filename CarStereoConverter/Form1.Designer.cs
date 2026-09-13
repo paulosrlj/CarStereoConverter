@@ -43,13 +43,40 @@
             progress_clm = new DataGridViewTextBoxColumn();
             label4 = new Label();
             lblStatus = new Label();
+            menuStrip1 = new MenuStrip();
+            mnuAjuda = new ToolStripMenuItem();
+            mnuSobre = new ToolStripMenuItem();
             panelDropArea.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvFiles).BeginInit();
+            menuStrip1.SuspendLayout();
             SuspendLayout();
+            // 
+            // menuStrip1
+            // 
+            menuStrip1.Items.AddRange(new ToolStripItem[] { mnuAjuda });
+            menuStrip1.Location = new Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Size = new Size(519, 24);
+            menuStrip1.TabIndex = 7;
+            menuStrip1.Text = "menuStrip1";
+            // 
+            // mnuAjuda
+            // 
+            mnuAjuda.DropDownItems.AddRange(new ToolStripItem[] { mnuSobre });
+            mnuAjuda.Name = "mnuAjuda";
+            mnuAjuda.Size = new Size(52, 20);
+            mnuAjuda.Text = "Ajuda";
+            // 
+            // mnuSobre
+            // 
+            mnuSobre.Name = "mnuSobre";
+            mnuSobre.Size = new Size(180, 22);
+            mnuSobre.Text = "Sobre...";
+            mnuSobre.Click += mnuSobre_Click;
             // 
             // btnConvert
             // 
-            btnConvert.Location = new Point(16, 589);
+            btnConvert.Location = new Point(16, 619);
             btnConvert.Name = "btnConvert";
             btnConvert.Size = new Size(491, 85);
             btnConvert.TabIndex = 0;
@@ -60,7 +87,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(12, 28);
+            label1.Location = new Point(12, 58);
             label1.Name = "label1";
             label1.Size = new Size(133, 15);
             label1.TabIndex = 1;
@@ -73,7 +100,7 @@
             panelDropArea.BorderStyle = BorderStyle.Fixed3D;
             panelDropArea.Controls.Add(btn_select_files);
             panelDropArea.Controls.Add(label2);
-            panelDropArea.Location = new Point(12, 70);
+            panelDropArea.Location = new Point(12, 100);
             panelDropArea.Name = "panelDropArea";
             panelDropArea.Size = new Size(491, 107);
             panelDropArea.TabIndex = 0;
@@ -102,7 +129,7 @@
             // 
             // txtOutputFolder
             // 
-            txtOutputFolder.Location = new Point(12, 246);
+            txtOutputFolder.Location = new Point(12, 276);
             txtOutputFolder.Name = "txtOutputFolder";
             txtOutputFolder.Size = new Size(382, 23);
             txtOutputFolder.TabIndex = 2;
@@ -110,7 +137,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(12, 214);
+            label3.Location = new Point(12, 244);
             label3.Name = "label3";
             label3.Size = new Size(81, 15);
             label3.TabIndex = 3;
@@ -118,7 +145,7 @@
             // 
             // button2
             // 
-            button2.Location = new Point(400, 246);
+            button2.Location = new Point(400, 276);
             button2.Name = "button2";
             button2.Size = new Size(103, 23);
             button2.TabIndex = 2;
@@ -130,7 +157,7 @@
             // 
             dgvFiles.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvFiles.Columns.AddRange(new DataGridViewColumn[] { file_clm, size_clm, status_clm, progress_clm });
-            dgvFiles.Location = new Point(16, 336);
+            dgvFiles.Location = new Point(16, 366);
             dgvFiles.Name = "dgvFiles";
             dgvFiles.Size = new Size(495, 196);
             dgvFiles.TabIndex = 4;
@@ -163,7 +190,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(16, 296);
+            label4.Location = new Point(16, 326);
             label4.Name = "label4";
             label4.Size = new Size(54, 15);
             label4.TabIndex = 5;
@@ -172,7 +199,7 @@
             // lblStatus
             // 
             lblStatus.AutoSize = true;
-            lblStatus.Location = new Point(16, 545);
+            lblStatus.Location = new Point(16, 575);
             lblStatus.Name = "lblStatus";
             lblStatus.Size = new Size(220, 15);
             lblStatus.TabIndex = 6;
@@ -182,7 +209,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(519, 705);
+            ClientSize = new Size(519, 735);
             Controls.Add(lblStatus);
             Controls.Add(label4);
             Controls.Add(dgvFiles);
@@ -192,12 +219,16 @@
             Controls.Add(panelDropArea);
             Controls.Add(label1);
             Controls.Add(btnConvert);
+            Controls.Add(menuStrip1);
+            MainMenuStrip = menuStrip1;
             Name = "Form1";
             Text = "Car Stereo normalizer";
             Load += Form1_Load;
             panelDropArea.ResumeLayout(false);
             panelDropArea.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dgvFiles).EndInit();
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -219,5 +250,8 @@
         private DataGridViewTextBoxColumn size_clm;
         private DataGridViewTextBoxColumn status_clm;
         private DataGridViewTextBoxColumn progress_clm;
+        private MenuStrip menuStrip1;
+        private ToolStripMenuItem mnuAjuda;
+        private ToolStripMenuItem mnuSobre;
     }
 }

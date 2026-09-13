@@ -403,6 +403,18 @@ namespace CarStereoConverter
         }
 
         // =========================================================
+        // SOBRE
+        // =========================================================
+
+        private void mnuSobre_Click(
+            object sender,
+            EventArgs e)
+        {
+            using var about = new AboutForm();
+            about.ShowDialog(this);
+        }
+
+        // =========================================================
         // EVENTOS NÃO UTILIZADOS
         // =========================================================
 
